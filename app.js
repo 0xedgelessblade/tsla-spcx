@@ -293,7 +293,7 @@
     } else if (last.cumulative < 0) {
       sentence = "這段期間的累計是負的，TSLA 整體較弱。";
     }
-    document.getElementById("reading").textContent = sentence + " 這是目前數字的讀法，不是預測。";
+    document.getElementById("reading").textContent = sentence;
     document.getElementById("updated").textContent =
       "資料截至 " + last.date + " 美股收盤。本頁更新於 " + malta(payload.generated_at) + " 馬爾他時間。";
   }
