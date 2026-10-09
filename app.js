@@ -32,16 +32,17 @@
     return "flat";
   }
 
-  function malta(iso) {
+  function utcPlus2(iso) {
+    const shifted = new Date(new Date(iso).getTime() + 2 * 60 * 60 * 1000);
     return new Intl.DateTimeFormat("zh-Hant-u-nu-latn", {
-      timeZone: "Europe/Malta",
+      timeZone: "UTC",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
       hourCycle: "h23",
-    }).format(new Date(iso));
+    }).format(shifted);
   }
 
   function card(label, value, extra, className) {
@@ -257,7 +258,7 @@
       card("上市以來 SPCX", num(spcxRet, 2) + "%", px(first.spcx) + " → " + px(end.spcx), tone(spcxRet)),
     ].join("");
     document.getElementById("updated").textContent =
-      "資料截至 " + last.date + " 美股收盤。本頁更新於 " + malta(payload.generated_at) + " 馬爾他時間。";
+      "資料截至 " + last.date + " 美股收盤。本頁更新於 " + utcPlus2(payload.generated_at) + " UTC+2。";
   }
 
   function fillTable() {
