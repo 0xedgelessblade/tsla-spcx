@@ -35,8 +35,6 @@ FIELDS = [
     "cumulative",
     "ma5",
     "ma20",
-    "ratio",
-    "ratio_index",
 ]
 
 
@@ -187,8 +185,6 @@ def write_csv(payload: dict) -> None:
                     "cumulative": "" if row["cumulative"] is None else row["cumulative"],
                     "ma5": "" if row["ma5"] is None else row["ma5"],
                     "ma20": "" if row["ma20"] is None else row["ma20"],
-                    "ratio": row["ratio"],
-                    "ratio_index": row["ratio_index"],
                 }
             )
 

@@ -1,5 +1,5 @@
 (function () {
-  const state = { bars: true, ma5: true, ma20: true, cum: true, ratio: true, range: 0 };
+  const state = { bars: true, ma5: true, ma20: true, cum: true, range: 0 };
   const charts = [];
   let rows = [];
   let syncing = false;
@@ -12,7 +12,6 @@
   const MA5 = "#2b6cb0";
   const MA20 = "#c56a12";
   const CUM = "#6d4ea3";
-  const RATIO = "#2f6f62";
 
   function num(value, digits) {
     if (value == null || Number.isNaN(Number(value))) return "—";
@@ -63,7 +62,6 @@
       "當日強勢 " + num(row.daily, 2),
       "累計 " + num(row.cumulative, 2),
       "5 日 " + num(row.ma5, 2) + "　20 日 " + num(row.ma20, 2),
-      "比值指數 " + (row.ratio_index == null ? "—" : Number(row.ratio_index).toFixed(2)),
     ];
     return lines.join("<br>");
   }
@@ -169,8 +167,7 @@
     charts.length = 0;
     const daily = echarts.init(document.getElementById("chart-daily"));
     const cum = echarts.init(document.getElementById("chart-cum"));
-    const ratio = echarts.init(document.getElementById("chart-ratio"));
-    charts.push(daily, cum, ratio);
+    charts.push(daily, cum);
 
     daily.setOption(Object.assign(baseOption(), {
       yAxis: valueAxis("百分點"),
@@ -234,31 +231,8 @@
       ],
     }));
 
-    ratio.setOption(Object.assign(baseOption(), {
-      yAxis: valueAxis("指數"),
-      series: [
-        {
-          name: "比值指數",
-          type: "line",
-          data: state.ratio ? rows.map((row) => row.ratio_index) : [],
-          showSymbol: false,
-          lineStyle: { width: 2.2, color: RATIO },
-          areaStyle: { color: "rgba(47,111,98,0.1)" },
-          itemStyle: { color: RATIO },
-          markLine: {
-            silent: true,
-            symbol: "none",
-            lineStyle: { color: INK, type: "dashed", width: 1 },
-            label: { formatter: "100", color: MUTED, position: "insideEndTop" },
-            data: [{ yAxis: 100 }],
-          },
-        },
-      ],
-    }));
-
     charts.forEach(bindSync);
     document.getElementById("panel-cum").hidden = !state.cum;
-    document.getElementById("panel-ratio").hidden = !state.ratio;
     applyRange();
     charts.forEach((chart) => chart.resize());
   }
@@ -299,8 +273,7 @@
         "<td class=\"" + tone(row.daily) + "\">" + num(row.daily, 2) + "</td>" +
         "<td class=\"" + tone(row.cumulative) + "\">" + num(row.cumulative, 2) + "</td>" +
         "<td>" + num(row.ma5, 2) + "</td>" +
-        "<td>" + num(row.ma20, 2) + "</td>" +
-        "<td>" + Number(row.ratio_index).toFixed(2) + "</td></tr>"
+        "<td>" + num(row.ma20, 2) + "</td></tr>"
       );
     }).join("");
     body.addEventListener("click", function (event) {

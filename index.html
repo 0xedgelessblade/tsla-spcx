@@ -31,7 +31,6 @@
         <button type="button" data-series="ma5" class="on" aria-pressed="true">5 日平均</button>
         <button type="button" data-series="ma20" class="on" aria-pressed="true">20 日平均</button>
         <button type="button" data-series="cum" class="on" aria-pressed="true">累計值</button>
-        <button type="button" data-series="ratio" class="on" aria-pressed="true">收盤比值</button>
       </div>
     </div>
     <p class="hint">滑鼠移到柱上可看當天全部數字。拖圖下方的滑桿，或在圖上用滾輪縮放。手機可雙指縮放。</p>
@@ -43,10 +42,6 @@
     <section id="panel-cum">
       <h2>累計強勢</h2>
       <div id="chart-cum" class="chart chart-short" role="img" aria-label="累計強勢折線圖"></div>
-    </section>
-    <section id="panel-ratio">
-      <h2>收盤比值 <span>上市首日 = 100</span></h2>
-      <div id="chart-ratio" class="chart chart-short" role="img" aria-label="TSLA 對 SPCX 收盤比值"></div>
     </section>
 
     <section>
@@ -67,7 +62,6 @@
               <th>累計</th>
               <th>5 日</th>
               <th>20 日</th>
-              <th>比值指數</th>
             </tr>
           </thead>
           <tbody></tbody>
