@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="TSLA 當日漲跌幅減去 SPCX 當日漲跌幅，單位是百分點。只使用 Yahoo Finance 公開收盤價。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>TSLA 對 SPCX 每日強勢</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="wrap">
+    <p class="kicker">公開股價 · 沒有帳號 · 沒有追蹤</p>
+    <h1>TSLA 對 SPCX 每日強勢</h1>
+    <p class="lede">當日強勢 = TSLA 收盤漲跌幅 − SPCX 收盤漲跌幅，單位是百分點。大於 0 代表 TSLA 較強，小於 0 代表 TSLA 較弱。</p>
+  </header>
+
+  <main class="wrap">
+    <section id="cards" class="cards" aria-live="polite"></section>
+    <p id="reading" class="reading"></p>
+
+    <div class="toolbar" role="toolbar" aria-label="圖表控制">
+      <div class="group" id="ranges">
+        <button type="button" data-range="21">1 個月</button>
+        <button type="button" data-range="63">3 個月</button>
+        <button type="button" data-range="0" class="on" aria-pressed="true">全部</button>
+      </div>
+      <div class="group" id="toggles">
+        <button type="button" data-series="bars" class="on" aria-pressed="true">柱狀圖</button>
+        <button type="button" data-series="ma5" class="on" aria-pressed="true">5 日平均</button>
+        <button type="button" data-series="ma20" class="on" aria-pressed="true">20 日平均</button>
+        <button type="button" data-series="cum" class="on" aria-pressed="true">累計值</button>
+        <button type="button" data-series="ratio" class="on" aria-pressed="true">收盤比值</button>
+      </div>
+    </div>
+    <p class="hint">滑鼠移到柱上可看當天全部數字。拖圖下方的滑桿，或在圖上用滾輪縮放。手機可雙指縮放。</p>
+
+    <section>
+      <h2>每日強勢</h2>
+      <div id="chart-daily" class="chart" role="img" aria-label="每日強勢柱狀圖"></div>
+    </section>
+    <section id="panel-cum">
+      <h2>累計強勢</h2>
+      <div id="chart-cum" class="chart chart-short" role="img" aria-label="累計強勢折線圖"></div>
+    </section>
+    <section id="panel-ratio">
+      <h2>收盤比值 <span>上市首日 = 100</span></h2>
+      <div id="chart-ratio" class="chart chart-short" role="img" aria-label="TSLA 對 SPCX 收盤比值"></div>
+    </section>
+
+    <section>
+      <div class="section-row">
+        <h2>每日數字</h2>
+        <a class="download" href="data/series.csv" download>下載 CSV</a>
+      </div>
+      <div class="table-wrap">
+        <table id="table">
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>TSLA 收盤</th>
+              <th>SPCX 收盤</th>
+              <th>TSLA %</th>
+              <th>SPCX %</th>
+              <th>當日強勢</th>
+              <th>累計</th>
+              <th>5 日</th>
+              <th>20 日</th>
+              <th>比值指數</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p id="updated">資料讀取中。</p>
+    <p>價格是 Yahoo Finance 的日調整收盤價。SPCX（SpaceX A 股）自 <a href="https://nasdaqtrader.com/TraderNews.aspx?id=DTN2026-8">2026-06-12</a> 在 Nasdaq 交易，所以這條線不能再往前算。強勢值從下一個兩個都有前一日收盤的交易日開始。</p>
+    <p>休市，或收盤價還沒公布時，不會用空資料覆蓋舊數字。這不是投資建議。本頁沒有後端，不放追蹤碼，也不收集訪客資料。</p>
+  </footer>
+  <noscript>
+    <p class="wrap">圖表需要瀏覽器繪圖。CSV 可以直接下載：<a href="data/series.csv">series.csv</a></p>
+  </noscript>
+  <script src="vendor/echarts.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

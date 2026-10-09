@@ -1,0 +1,3 @@
+echarts.min.js is Apache License 2.0.
+The license header is at the top of that file.
+This page does not load it from a third-party server.

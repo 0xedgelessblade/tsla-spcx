@@ -1,0 +1,33 @@
+name: Refresh prices
+
+on:
+  schedule:
+    # 22:45 UTC, Monday–Friday. After the US cash close in both summer and winter.
+    - cron: "45 22 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-prices
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Update series
+        run: python3 update.py
+      - name: Publish if the series changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/series.json data/series.csv
+          git diff --cached --quiet && exit 0
+          git commit -m "Update daily closes"
+          git push
