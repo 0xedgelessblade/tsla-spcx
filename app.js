@@ -282,18 +282,6 @@
       card("上市以來 TSLA", num(tslaRet, 2) + "%", px(first.tsla) + " → " + px(end.tsla), tone(tslaRet)),
       card("上市以來 SPCX", num(spcxRet, 2) + "%", px(first.spcx) + " → " + px(end.spcx), tone(spcxRet)),
     ].join("");
-
-    let sentence = "累計目前接近零。";
-    if (pos > neg && last.cumulative < 0) {
-      sentence = "較強的天數比較多，但累計仍是負的：較弱的日子，幅度更大。";
-    } else if (pos < neg && last.cumulative > 0) {
-      sentence = "較弱的天數比較多，但累計仍是正的：較強的日子，幅度更大。";
-    } else if (last.cumulative > 0) {
-      sentence = "這段期間的累計是正的，TSLA 整體較強。";
-    } else if (last.cumulative < 0) {
-      sentence = "這段期間的累計是負的，TSLA 整體較弱。";
-    }
-    document.getElementById("reading").textContent = sentence;
     document.getElementById("updated").textContent =
       "資料截至 " + last.date + " 美股收盤。本頁更新於 " + malta(payload.generated_at) + " 馬爾他時間。";
   }
