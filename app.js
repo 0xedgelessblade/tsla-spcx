@@ -32,8 +32,8 @@
     return "flat";
   }
 
-  function utcPlus2(iso) {
-    const shifted = new Date(new Date(iso).getTime() + 2 * 60 * 60 * 1000);
+  function utcPlus1(iso) {
+    const shifted = new Date(new Date(iso).getTime() + 1 * 60 * 60 * 1000);
     return new Intl.DateTimeFormat("zh-Hant-u-nu-latn", {
       timeZone: "UTC",
       year: "numeric",
@@ -258,7 +258,7 @@
       card("上市以來 SPCX", num(spcxRet, 2) + "%", px(first.spcx) + " → " + px(end.spcx), tone(spcxRet)),
     ].join("");
     document.getElementById("updated").textContent =
-      "資料截至 " + last.date + " 美股收盤。本頁更新於 " + utcPlus2(payload.generated_at) + " UTC+2。";
+      "資料截至 " + last.date + " 美股收盤。本頁更新於 " + utcPlus1(payload.generated_at) + " UTC+1。";
   }
 
   function fillTable() {
