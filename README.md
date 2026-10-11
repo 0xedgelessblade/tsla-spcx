@@ -2,7 +2,7 @@
 
 公開網頁。只放兩檔股票的收盤價，和用那些價格算出來的強勢值。
 
-[edgelessblade 做的](https://edgelessblade.com/)。
+[edgelessblade](https://edgelessblade.com/)
 
 當日強勢 = TSLA 當天收盤漲跌幅 − SPCX 當天收盤漲跌幅，單位是百分點。大於 0 代表 TSLA 較強。
 
