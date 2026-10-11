@@ -54,6 +54,19 @@ h1 {
   font-size: 1.02rem;
 }
 
+.by {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.by a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 0.2em;
+}
+
 h2 {
   margin: 28px 0 8px;
   font-size: 1.05rem;
