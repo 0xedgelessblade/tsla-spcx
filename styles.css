@@ -57,12 +57,17 @@ h1 {
 .sign {
   margin: 22px 0 0;
   font-size: 12px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
 }
 
 .sign a {
   color: var(--muted);
   text-decoration: none;
+}
+
+.sign span {
+  margin: 0 0.7rem;
+  color: var(--line);
 }
 
 .sign a:hover { color: var(--ink); }
