@@ -54,23 +54,6 @@ h1 {
   font-size: 1.02rem;
 }
 
-.sign {
-  margin: 22px 0 0;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-}
-
-.sign a {
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.sign span {
-  margin: 0 0.7rem;
-  color: var(--line);
-}
-
-.sign a:hover { color: var(--ink); }
 
 h2 {
   margin: 28px 0 8px;
@@ -220,4 +203,34 @@ footer a { color: var(--ink); }
   .chart { height: 320px; }
   .chart-short { height: 220px; }
   .card b { font-size: 1.15rem; }
+}
+
+/* Author signature: a quiet bridge back to the main site. */
+.author {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.author-copy { min-width: 0; }
+.author-label { margin: 0 0 10px; color: var(--muted); font-size: 12px; letter-spacing: .12em; }
+.author h2 { margin: 0; font-family: "Songti TC", "Noto Serif TC", serif; font-size: 1.5rem; }
+.author h2 a { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; }
+.author h2 span { margin: 0; font: 400 13px "Avenir Next", sans-serif; letter-spacing: .04em; }
+.author a { color: var(--ink); text-decoration: none; }
+.author a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.author a:focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; border-radius: 2px; }
+.author-description { margin: 10px 0 8px; max-width: 38rem; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.author-social { display: flex; flex-wrap: wrap; gap: 0 24px; }
+.author-social a { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0 7px; min-height: 44px; font-size: 13px; }
+.author-social span { color: var(--muted); font-size: 12px; }
+.author-home { display: inline-flex; align-items: center; gap: 22px; min-height: 44px; padding: 8px 0; border-bottom: 1px solid var(--ink); white-space: nowrap; font-size: 14px; }
+@media (max-width: 700px) {
+  .author { align-items: flex-start; flex-direction: column; gap: 12px; margin-top: 28px; padding: 24px 0; }
+  .author-social { column-gap: 16px; }
 }
