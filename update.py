@@ -219,20 +219,27 @@ def push_changes() -> int:
     return 0
 
 
+NOT_YET = 75
+
+
 def main() -> int:
     DATA.mkdir(parents=True, exist_ok=True)
     old = load_existing()
+    waiting = "--require-new-day" in sys.argv
     try:
         payload = build(completed_bars(fetch_chart("TSLA")), completed_bars(fetch_chart("SPCX")))
     except Exception as exc:
         print(f"kept previous: {exc}")
-        return 0 if old else 1
+        return NOT_YET if waiting and old else (0 if old else 1)
     reason = reject_reason(payload, old)
     if reason:
         print(f"kept previous: {reason}")
-        return 0
+        return NOT_YET if waiting and old else 0
     if same_prices(payload, old):
-        print(f"unchanged through {payload['rows'][-1]['date']}")
+        last = payload["rows"][-1]["date"]
+        print(f"unchanged through {last}")
+        if waiting and old and last <= old["rows"][-1]["date"]:
+            return NOT_YET
         return 0
     JSON_PATH.write_text(json.dumps(payload, indent=2) + "\n")
     write_csv(payload)
