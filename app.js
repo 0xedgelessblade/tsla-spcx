@@ -25,6 +25,18 @@
     return Number(value).toFixed(2);
   }
 
+  function idx(value) {
+    if (value == null || Number.isNaN(Number(value))) return "—";
+    return Number(value).toFixed(2);
+  }
+
+  function toneIndex(value) {
+    if (value == null) return "flat";
+    if (value > 100) return "up";
+    if (value < 100) return "down";
+    return "flat";
+  }
+
   function tone(value) {
     if (value == null) return "flat";
     if (value > 0) return "up";
@@ -61,7 +73,7 @@
       "TSLA 收盤 " + px(row.tsla) + "　當日 " + num(row.tsla_pct, 2) + "%",
       "SPCX 收盤 " + px(row.spcx) + "　當日 " + num(row.spcx_pct, 2) + "%",
       "當日強勢 " + num(row.daily, 2),
-      "累計 " + num(row.cumulative, 2),
+      "累計 " + idx(row.ratio_index),
       "5 日 " + num(row.ma5, 2) + "　20 日 " + num(row.ma20, 2),
     ];
     return lines.join("<br>");
@@ -77,12 +89,12 @@
     };
   }
 
-  function valueAxis(name) {
+  function valueAxis(name, scale) {
     return {
       type: "value",
       name: name,
       nameTextStyle: { color: MUTED },
-      scale: false,
+      scale: Boolean(scale),
       axisLabel: { color: MUTED },
       splitLine: { lineStyle: { color: "#efe8dc" } },
     };
@@ -107,14 +119,18 @@
     ];
   }
 
-  function zeroLine() {
+  function levelLine(y, label) {
     return {
       silent: true,
       symbol: "none",
       lineStyle: { color: INK, width: 1.2 },
-      label: { show: true, formatter: "0", color: MUTED },
-      data: [{ yAxis: 0 }],
+      label: { show: true, formatter: label, color: MUTED },
+      data: [{ yAxis: y }],
     };
+  }
+
+  function zeroLine() {
+    return levelLine(0, "0");
   }
 
   function baseOption() {
@@ -203,30 +219,30 @@
       ],
     }));
 
-    const last = rows.filter((row) => row.cumulative != null).slice(-1)[0];
+    const last = rows[rows.length - 1];
     cum.setOption(Object.assign(baseOption(), {
-      yAxis: valueAxis("百分點"),
+      yAxis: valueAxis("起始 100", true),
       series: [
         {
           name: "累計強勢",
           type: "line",
-          data: state.cum ? rows.map((row) => row.cumulative) : [],
+          data: state.cum ? rows.map((row) => row.ratio_index) : [],
           showSymbol: false,
           connectNulls: false,
           lineStyle: { width: 2.2, color: CUM },
           areaStyle: { color: "rgba(109,78,163,0.12)" },
           itemStyle: { color: CUM },
-          markLine: zeroLine(),
+          markLine: levelLine(100, "100"),
           markPoint: last && state.cum ? {
             symbol: "circle",
             symbolSize: 8,
             itemStyle: { color: CUM },
             label: {
-              formatter: num(last.cumulative, 2),
+              formatter: idx(last.ratio_index),
               color: CUM,
               position: "left",
             },
-            data: [{ coord: [last.date, last.cumulative] }],
+            data: [{ coord: [last.date, last.ratio_index] }],
           } : undefined,
         },
       ],
@@ -252,7 +268,7 @@
       card("當日強勢", num(last.daily, 2), last.daily >= 0 ? "TSLA 較強" : "TSLA 較弱", tone(last.daily)),
       card("5 日平均", num(last.ma5, 2), "百分點", tone(last.ma5)),
       card("20 日平均", num(last.ma20, 2), "百分點", tone(last.ma20)),
-      card("累計強勢", num(last.cumulative, 2), "百分點", tone(last.cumulative)),
+      card("累計強勢", idx(end.ratio_index), end.ratio_index >= 100 ? "回到起始之上" : "仍低於起始", toneIndex(end.ratio_index)),
       card("較強 / 較弱", pos + " / " + neg, "天"),
       card("上市以來 TSLA", num(tslaRet, 2) + "%", px(first.tsla) + " → " + px(end.tsla), tone(tslaRet)),
       card("上市以來 SPCX", num(spcxRet, 2) + "%", px(first.spcx) + " → " + px(end.spcx), tone(spcxRet)),
@@ -272,7 +288,7 @@
         "<td class=\"" + tone(row.tsla_pct) + "\">" + num(row.tsla_pct, 2) + "</td>" +
         "<td class=\"" + tone(row.spcx_pct) + "\">" + num(row.spcx_pct, 2) + "</td>" +
         "<td class=\"" + tone(row.daily) + "\">" + num(row.daily, 2) + "</td>" +
-        "<td class=\"" + tone(row.cumulative) + "\">" + num(row.cumulative, 2) + "</td>" +
+        "<td class=\"" + toneIndex(row.ratio_index) + "\">" + idx(row.ratio_index) + "</td>" +
         "<td>" + num(row.ma5, 2) + "</td>" +
         "<td>" + num(row.ma20, 2) + "</td></tr>"
       );

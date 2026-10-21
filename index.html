@@ -16,7 +16,7 @@
   <header class="wrap">
     <p class="kicker">併購宣布時·目標公司上漲·收購方下跌</p>
     <h1>TSLA・SPCX 合併預測</h1>
-    <p class="lede">當日強勢 = TSLA 收盤漲跌幅 − SPCX 收盤漲跌幅，單位是百分點。大於 0 代表 TSLA 較強，小於 0 代表 TSLA 較弱。當累積強勢越來越多的時候，表示市場可能正在定價即將發生的合併。</p>
+    <p class="lede">當日強勢 = TSLA 收盤漲跌幅 − SPCX 收盤漲跌幅，單位是百分點。大於 0 代表 TSLA 較強，小於 0 代表 TSLA 較弱。累計強勢是兩檔收盤價的比值，第一天為 100。高於 100 代表 TSLA 相對 SPCX 比起始日強。比值越高，表示市場可能正在定價即將發生的合併。</p>
   </header>
 
   <main class="wrap">
@@ -43,7 +43,7 @@
     </section>
     <section id="panel-cum">
       <h2>累計強勢</h2>
-      <div id="chart-cum" class="chart chart-short" role="img" aria-label="累計強勢折線圖"></div>
+      <div id="chart-cum" class="chart chart-short" role="img" aria-label="累計強勢比值折線圖"></div>
     </section>
 
     <section>
@@ -61,7 +61,7 @@
               <th>TSLA %</th>
               <th>SPCX %</th>
               <th>當日強勢</th>
-              <th>累計</th>
+              <th>比值</th>
               <th>5 日</th>
               <th>20 日</th>
             </tr>

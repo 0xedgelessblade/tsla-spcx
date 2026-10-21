@@ -32,7 +32,7 @@ FIELDS = [
     "tsla_pct",
     "spcx_pct",
     "daily_strength",
-    "cumulative",
+    "ratio_index",
     "ma5",
     "ma20",
 ]
@@ -182,7 +182,7 @@ def write_csv(payload: dict) -> None:
                     "tsla_pct": "" if row["tsla_pct"] is None else row["tsla_pct"],
                     "spcx_pct": "" if row["spcx_pct"] is None else row["spcx_pct"],
                     "daily_strength": "" if row["daily"] is None else row["daily"],
-                    "cumulative": "" if row["cumulative"] is None else row["cumulative"],
+                    "ratio_index": "" if row["ratio_index"] is None else row["ratio_index"],
                     "ma5": "" if row["ma5"] is None else row["ma5"],
                     "ma20": "" if row["ma20"] is None else row["ma20"],
                 }
