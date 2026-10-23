@@ -2,9 +2,11 @@ name: Refresh prices
 
 on:
   schedule:
-    # 08:17 UTC, Tuesday–Saturday. First look is after Yahoo has had the
-    # night to publish the US cash close. GitHub may start this late.
-    - cron: "17 8 * * 2-6"
+    # GitHub starts scheduled runs hours late, so look several times.
+    # The first run after the US close publishes it; later runs find
+    # nothing new and stop. Minute 37 avoids the top-of-hour rush.
+    - cron: "37 21,23 * * 1-5"
+    - cron: "37 2,5,8,11 * * 2-6"
   workflow_dispatch:
 
 permissions:
@@ -22,37 +24,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Update series, then retry hourly while the new day is missing
+      - name: Update series
         run: |
-          python3 update.py --require-new-day
-          code=$?
-          if [ "$code" -eq 0 ]; then
+          code=0
+          python3 update.py --require-new-day || code=$?
+          if [ "$code" -eq 75 ]; then
+            echo "no new completed day yet; the next scheduled run will look again"
             exit 0
           fi
-          if [ "$code" -ne 75 ]; then
-            exit "$code"
-          fi
-          # Stop at the next 13:30 UTC, before the next session can open.
-          # 13:30 UTC is 09:30 in New York during summer, and 08:30 in winter.
-          now=$(date -u +%s)
-          deadline=$(date -u -d '13:30 UTC' +%s)
-          if [ "$deadline" -le "$now" ]; then
-            deadline=$(date -u -d 'tomorrow 13:30 UTC' +%s)
-          fi
-          while [ "$(date -u +%s)" -lt "$deadline" ]; do
-            echo "new day not published yet; waiting 1 hour"
-            sleep 3600
-            python3 update.py --require-new-day
-            code=$?
-            if [ "$code" -eq 0 ]; then
-              exit 0
-            fi
-            if [ "$code" -ne 75 ]; then
-              exit "$code"
-            fi
-          done
-          echo "still no new completed day before the next open; leaving the saved series unchanged"
-          exit 1
+          exit "$code"
       - name: Publish if the series changed
         run: |
           git config user.name "github-actions[bot]"
