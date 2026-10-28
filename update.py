@@ -204,10 +204,11 @@ def tone(value: float | None, middle: float = 0) -> str:
     return "up" if value > middle else "down"
 
 
-def card(label: str, value: str, extra: str, cls: str = "flat") -> str:
+def card(label: str, value: str, extra: str, cls: str = "flat", note: str = "") -> str:
     # Same markup as card() in app.js, so the script swaps it without a shift.
+    tail = f"<i>{html.escape(note)}</i>" if note else ""
     return (
-        f'<article class="card"><span>{html.escape(label)}</span>'
+        f'<article class="card"><span>{html.escape(label)}{tail}</span>'
         f'<b class="{cls}">{html.escape(value)}</b>'
         f"<small>{html.escape(extra)}</small></article>"
     )
@@ -224,11 +225,13 @@ def write_html(payload: dict) -> None:
     spcx_ret = (end["spcx"] / first["spcx"] - 1) * 100
     ratio = end["ratio_index"]
     cards = [
-        card("最新交易日", last["date"], "美股收盤"),
-        card("當日強勢", signed(last["daily"]), "TSLA 較強" if last["daily"] >= 0 else "TSLA 較弱", tone(last["daily"])),
+        card("當日強勢", signed(last["daily"]), "TSLA 較強" if last["daily"] >= 0 else "TSLA 較弱", tone(last["daily"]), last["date"]),
         card("5 日平均", signed(last["ma5"]), "百分點", tone(last["ma5"])),
         card("20 日平均", signed(last["ma20"]), "百分點", tone(last["ma20"])),
         card("累計強勢", f"{ratio:.2f}", "回到起始之上" if ratio >= 100 else "仍低於起始", tone(ratio, 100)),
+    ]
+    more = [
+        card("最新交易日", last["date"], "美股收盤"),
         card("較強 / 較弱", f"{pos} / {neg}", "天"),
         card("上市以來 TSLA", signed(tsla_ret) + "%", f"{first['tsla']:.2f} → {end['tsla']:.2f}", tone(tsla_ret)),
         card("上市以來 SPCX", signed(spcx_ret) + "%", f"{first['spcx']:.2f} → {end['spcx']:.2f}", tone(spcx_ret)),
@@ -239,7 +242,7 @@ def write_html(payload: dict) -> None:
         f'本頁更新於 {stamp:%Y/%m/%d %H:%M} UTC+1</p>'
     )
     page = HTML_PATH.read_text()
-    for name, body in (("cards", "\n".join(cards)), ("updated", updated)):
+    for name, body in (("cards", "\n".join(cards)), ("more", "\n".join(more)), ("updated", updated)):
         start, stop = f"<!-- latest:{name}:start -->", f"<!-- latest:{name}:end -->"
         page, count = re.subn(
             re.escape(start) + r".*?" + re.escape(stop),

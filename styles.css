@@ -86,9 +86,14 @@ h2 span {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
+
+.cards-more { margin-top: 10px; }
+
+/* The date beside 當日強勢 only shows on phones, where 最新交易日 moves down. */
+.card span i { display: none; font-style: normal; }
 
 .card {
   background: var(--card);
@@ -257,4 +262,45 @@ footer a { color: var(--ink); }
 @media (max-width: 700px) {
   .author { align-items: flex-start; flex-direction: column; gap: 12px; margin-top: 28px; padding: 24px 0; }
   .author-social { column-gap: 16px; }
+}
+
+/* Phones: one headline number, then the chart; the rest follows the chart. */
+@media (max-width: 700px) {
+  .page { display: flex; flex-direction: column; padding-top: 22px; }
+  .page > header, .page > main { display: contents; }
+  .wordmark { order: 1; align-self: flex-start; }
+  .kicker { order: 2; }
+  h1 { order: 3; padding-bottom: 14px; border-bottom: 1px solid var(--ink); }
+  #cards { order: 4; }
+  .toolbar { order: 5; }
+  #panel-daily { order: 6; }
+  .lede { order: 7; font-size: 0.95rem; }
+  .lede:first-of-type { margin-top: 22px; }
+  .lede + .lede { margin-top: 0; }
+  #cards-more { order: 8; margin-top: 8px; }
+  #panel-cum { order: 9; }
+  #panel-table { order: 10; }
+  .hint { display: none; }
+
+  #cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  #cards .card { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 10px 0; }
+  #cards .card:first-child { grid-column: 1 / -1; padding: 14px 0 12px; border-bottom: 1px solid var(--line); }
+  #cards .card:first-child b {
+    font-family: "Iowan Old Style", Palatino, "Songti TC", serif;
+    font-size: 3.2rem;
+    font-weight: 500;
+    line-height: 1.05;
+  }
+  #cards .card span i { display: inline; }
+  #cards .card span i::before { content: "・"; }
+  .cards-more { grid-template-columns: repeat(2, 1fr); }
+
+  .toolbar { flex-wrap: nowrap; overflow-x: auto; margin: 12px -16px 0; padding: 0 16px; scrollbar-width: none; }
+  .toolbar::-webkit-scrollbar { display: none; }
+  .group { flex-wrap: nowrap; }
+  button { white-space: nowrap; }
 }

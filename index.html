@@ -69,11 +69,11 @@
     ]
   }
   </script>
-  <script defer src="vendor/echarts.min.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
-  <header class="wrap">
+  <div class="page wrap">
+  <header>
     <a class="wordmark" href="https://edgelessblade.com/">重劍無鋒<span>edgelessblade</span></a>
     <p class="kicker">併購宣布時·目標公司上漲·收購方下跌</p>
     <h1>TSLA・SPCX 強勢觀察</h1>
@@ -81,18 +81,22 @@
     <p class="lede">當日強勢 = TSLA 收盤漲跌幅 − SPCX 收盤漲跌幅，單位是百分點，大於 0 代表 TSLA 較強，小於 0 代表 TSLA 較弱<br>累計強勢是兩檔收盤價的比值，第一天為 100，高於 100 代表 TSLA 相對 SPCX 比起始日強，比值越高，表示市場可能正在定價即將發生的合併</p>
   </header>
 
-  <main class="wrap">
+  <main>
     <section id="cards" class="cards" aria-live="polite">
 <!-- latest:cards:start -->
-<article class="card"><span>最新交易日</span><b class="flat">2026-10-27</b><small>美股收盤</small></article>
-<article class="card"><span>當日強勢</span><b class="up">+2.90</b><small>TSLA 較強</small></article>
+<article class="card"><span>當日強勢<i>2026-10-27</i></span><b class="up">+2.90</b><small>TSLA 較強</small></article>
 <article class="card"><span>5 日平均</span><b class="up">+1.53</b><small>百分點</small></article>
 <article class="card"><span>20 日平均</span><b class="up">+0.69</b><small>百分點</small></article>
 <article class="card"><span>累計強勢</span><b class="up">108.60</b><small>回到起始之上</small></article>
+<!-- latest:cards:end -->
+    </section>
+    <section id="cards-more" class="cards cards-more">
+<!-- latest:more:start -->
+<article class="card"><span>最新交易日</span><b class="flat">2026-10-27</b><small>美股收盤</small></article>
 <article class="card"><span>較強 / 較弱</span><b class="flat">54 / 40</b><small>天</small></article>
 <article class="card"><span>上市以來 TSLA</span><b class="up">+0.25%</b><small>406.43 → 407.46</small></article>
 <article class="card"><span>上市以來 SPCX</span><b class="down">-7.69%</b><small>160.95 → 148.58</small></article>
-<!-- latest:cards:end -->
+<!-- latest:more:end -->
     </section>
 
     <div class="toolbar" role="toolbar" aria-label="圖表控制">
@@ -110,7 +114,7 @@
     </div>
     <p class="hint">點圖上任一天，或點表格任一列，看當天全部數字，拖圖下方的滑桿或雙指縮放可以改範圍</p>
 
-    <section>
+    <section id="panel-daily">
       <h2>每日強勢</h2>
       <div id="chart-daily" class="chart" role="img" aria-label="每日強勢柱狀圖"></div>
     </section>
@@ -119,7 +123,7 @@
       <div id="chart-cum" class="chart chart-short" role="img" aria-label="累計強勢比值折線圖"></div>
     </section>
 
-    <section>
+    <section id="panel-table">
       <div class="section-row">
         <h2>每日數字</h2>
         <a class="download" href="data/series.csv" download>下載 CSV</a>
@@ -144,6 +148,7 @@
       </div>
     </section>
   </main>
+  </div>
 
   <aside class="author wrap" aria-labelledby="author-name">
     <div class="author-copy">

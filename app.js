@@ -57,9 +57,9 @@
     }).format(shifted);
   }
 
-  function card(label, value, extra, className) {
+  function card(label, value, extra, className, note) {
     return (
-      '<article class="card"><span>' + label + "</span><b class=\"" +
+      '<article class="card"><span>' + label + (note ? "<i>" + note + "</i>" : "") + "</span><b class=\"" +
       (className || "flat") + "\">" + value + "</b>" +
       (extra ? "<small>" + extra + "</small>" : "") + "</article>"
     );
@@ -180,6 +180,7 @@
   }
 
   function draw() {
+    if (!window.echarts) return;
     charts.forEach((chart) => chart.dispose());
     charts.length = 0;
     const daily = echarts.init(document.getElementById("chart-daily"));
@@ -264,11 +265,13 @@
     const tslaRet = (end.tsla / first.tsla - 1) * 100;
     const spcxRet = (end.spcx / first.spcx - 1) * 100;
     document.getElementById("cards").innerHTML = [
-      card("最新交易日", last.date, "美股收盤"),
-      card("當日強勢", num(last.daily, 2), last.daily >= 0 ? "TSLA 較強" : "TSLA 較弱", tone(last.daily)),
+      card("當日強勢", num(last.daily, 2), last.daily >= 0 ? "TSLA 較強" : "TSLA 較弱", tone(last.daily), last.date),
       card("5 日平均", num(last.ma5, 2), "百分點", tone(last.ma5)),
       card("20 日平均", num(last.ma20, 2), "百分點", tone(last.ma20)),
       card("累計強勢", idx(end.ratio_index), end.ratio_index >= 100 ? "回到起始之上" : "仍低於起始", toneIndex(end.ratio_index)),
+    ].join("");
+    document.getElementById("cards-more").innerHTML = [
+      card("最新交易日", last.date, "美股收盤"),
       card("較強 / 較弱", pos + " / " + neg, "天"),
       card("上市以來 TSLA", num(tslaRet, 2) + "%", px(first.tsla) + " → " + px(end.tsla), tone(tslaRet)),
       card("上市以來 SPCX", num(spcxRet, 2) + "%", px(first.spcx) + " → " + px(end.spcx), tone(spcxRet)),
@@ -302,6 +305,25 @@
         dataIndex: rows.findIndex((row) => row.date === tr.dataset.date),
       });
     });
+  }
+
+  // ECharts is the heaviest file; fetch it only when a chart is about to scroll into view.
+  function whenChartsNear(done) {
+    function load() {
+      const script = document.createElement("script");
+      script.src = "vendor/echarts.min.js";
+      script.onload = function () {
+        (window.requestIdleCallback || function (fn) { setTimeout(fn, 1); })(done, { timeout: 800 });
+      };
+      document.head.appendChild(script);
+    }
+    if (!("IntersectionObserver" in window)) return load();
+    const watch = new IntersectionObserver(function (entries) {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      watch.disconnect();
+      load();
+    }, { rootMargin: "300px 0px" });
+    watch.observe(document.getElementById("chart-daily"));
   }
 
   document.getElementById("ranges").addEventListener("click", function (event) {
@@ -341,8 +363,7 @@
       if (!rows.length) throw new Error("empty");
       fillSummary(payload);
       fillTable();
-      // Cards and table first; the charts wait for an idle moment.
-      (window.requestIdleCallback || function (fn) { setTimeout(fn, 1); })(draw, { timeout: 800 });
+      whenChartsNear(draw);
     })
     .catch(() => {
       document.getElementById("cards").innerHTML = card("資料", "暫時讀不到", "請稍後重新整理");
