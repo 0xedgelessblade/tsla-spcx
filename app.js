@@ -274,7 +274,7 @@
       card("上市以來 SPCX", num(spcxRet, 2) + "%", px(first.spcx) + " → " + px(end.spcx), tone(spcxRet)),
     ].join("");
     document.getElementById("updated").textContent =
-      "資料截至 " + last.date + " 美股收盤。本頁更新於 " + utcPlus1(payload.generated_at) + " UTC+1。";
+      "資料截至 " + last.date + " 美股收盤，本頁更新於 " + utcPlus1(payload.generated_at) + " UTC+1";
   }
 
   function fillTable() {
@@ -330,7 +330,8 @@
     charts.forEach((chart) => chart.resize());
   });
 
-  fetch("data/series.json", { cache: "no-store" })
+  // Same request as the <link rel="preload"> in index.html, so it is reused.
+  fetch("data/series.json")
     .then((response) => {
       if (!response.ok) throw new Error("missing");
       return response.json();
@@ -340,10 +341,11 @@
       if (!rows.length) throw new Error("empty");
       fillSummary(payload);
       fillTable();
-      draw();
+      // Cards and table first; the charts wait for an idle moment.
+      (window.requestIdleCallback || function (fn) { setTimeout(fn, 1); })(draw, { timeout: 800 });
     })
     .catch(() => {
       document.getElementById("cards").innerHTML = card("資料", "暫時讀不到", "請稍後重新整理");
-      document.getElementById("updated").textContent = "公開股價暫時讀不到。舊檔若已下載，仍可用 CSV。";
+      document.getElementById("updated").textContent = "公開股價暫時讀不到，舊檔若已下載，仍可用 CSV";
     });
 })();

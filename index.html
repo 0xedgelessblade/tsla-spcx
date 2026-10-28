@@ -4,23 +4,96 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <meta name="description" content="TSLA 當日漲跌幅減去 SPCX 當日漲跌幅，單位是百分點。只使用 Yahoo Finance 公開收盤價。">
+  <meta name="description" content="TSLA 當日漲跌幅減去 SPCX 當日漲跌幅，單位是百分點，只使用 Yahoo Finance 公開收盤價">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
-  <title>TSLA・SPCX 合併預測</title>
+  <title>TSLA・SPCX 強勢觀察</title>
   <link rel="canonical" href="https://edgelessblade.com/tsla-spcx/">
   <link rel="author" href="https://edgelessblade.com/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="data/series.json" as="fetch" crossorigin>
   <link rel="stylesheet" href="styles.css">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:site_name" content="edgelessblade">
+  <meta property="og:title" content="TSLA・SPCX 強勢觀察">
+  <meta property="og:description" content="TSLA 當日漲跌幅減去 SPCX 當日漲跌幅，單位是百分點，只使用 Yahoo Finance 公開收盤價">
+  <meta property="og:url" content="https://edgelessblade.com/tsla-spcx/">
+  <meta property="og:image" content="https://edgelessblade.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TSLA・SPCX 強勢觀察">
+  <meta name="twitter:description" content="TSLA 當日漲跌幅減去 SPCX 當日漲跌幅，單位是百分點，只使用 Yahoo Finance 公開收盤價">
+  <meta name="twitter:image" content="https://edgelessblade.com/og.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://edgelessblade.com/tsla-spcx/#webpage",
+        "url": "https://edgelessblade.com/tsla-spcx/",
+        "name": "TSLA・SPCX 強勢觀察",
+        "description": "TSLA 當日漲跌幅減去 SPCX 當日漲跌幅，單位是百分點，只使用 Yahoo Finance 公開收盤價",
+        "inLanguage": "zh-Hant",
+        "isPartOf": { "@id": "https://edgelessblade.com/#website" },
+        "author": { "@id": "https://edgelessblade.com/#author" },
+        "breadcrumb": { "@id": "https://edgelessblade.com/tsla-spcx/#breadcrumb" },
+        "mainEntity": { "@id": "https://edgelessblade.com/tsla-spcx/#dataset" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://edgelessblade.com/tsla-spcx/#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "edgelessblade", "item": "https://edgelessblade.com/" },
+          { "@type": "ListItem", "position": 2, "name": "TSLA・SPCX 強勢觀察" }
+        ]
+      },
+      {
+        "@type": "Dataset",
+        "@id": "https://edgelessblade.com/tsla-spcx/#dataset",
+        "name": "TSLA・SPCX 每日相對強弱",
+        "description": "TSLA 與 SPCX 的每日調整收盤價、每日漲跌幅、當日強勢（TSLA 漲跌幅減 SPCX 漲跌幅，單位百分點）、累計比值（第一天為 100）、5 日與 20 日平均，SPCX 自 2026-06-12 起在 Nasdaq 交易",
+        "url": "https://edgelessblade.com/tsla-spcx/",
+        "inLanguage": "zh-Hant",
+        "creator": { "@id": "https://edgelessblade.com/#author" },
+        "isBasedOn": "https://finance.yahoo.com/",
+        "temporalCoverage": "2026-06-12/..",
+        "variableMeasured": ["tsla_close", "spcx_close", "tsla_pct", "spcx_pct", "daily_strength", "ratio_index", "ma5", "ma20"],
+        "distribution": {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "contentUrl": "https://edgelessblade.com/tsla-spcx/data/series.csv"
+        }
+      }
+    ]
+  }
+  </script>
+  <script defer src="vendor/echarts.min.js"></script>
+  <script defer src="app.js"></script>
 </head>
 <body>
   <header class="wrap">
+    <a class="wordmark" href="https://edgelessblade.com/">重劍無鋒<span>edgelessblade</span></a>
     <p class="kicker">併購宣布時·目標公司上漲·收購方下跌</p>
-    <h1>TSLA・SPCX 合併預測</h1>
-    <p class="lede">當日強勢 = TSLA 收盤漲跌幅 − SPCX 收盤漲跌幅，單位是百分點。大於 0 代表 TSLA 較強，小於 0 代表 TSLA 較弱。累計強勢是兩檔收盤價的比值，第一天為 100。高於 100 代表 TSLA 相對 SPCX 比起始日強。比值越高，表示市場可能正在定價即將發生的合併。</p>
+    <h1>TSLA・SPCX 強勢觀察</h1>
+    <p class="lede">假設 TSLA 為收購方、SPCX 為目標，2026-10-20 兩家公司董事會各自成立特別委員會評估合併（<a href="https://www.nbcnews.com/business/business-news/elon-musk-spacex-tesla-merger-rcna604685">NBC News 報導</a>），目前沒有任何協議</p>
+    <p class="lede">當日強勢 = TSLA 收盤漲跌幅 − SPCX 收盤漲跌幅，單位是百分點，大於 0 代表 TSLA 較強，小於 0 代表 TSLA 較弱<br>累計強勢是兩檔收盤價的比值，第一天為 100，高於 100 代表 TSLA 相對 SPCX 比起始日強，比值越高，表示市場可能正在定價即將發生的合併</p>
   </header>
 
   <main class="wrap">
-    <section id="cards" class="cards" aria-live="polite"></section>
+    <section id="cards" class="cards" aria-live="polite">
+<!-- latest:cards:start -->
+<article class="card"><span>最新交易日</span><b class="flat">2026-10-27</b><small>美股收盤</small></article>
+<article class="card"><span>當日強勢</span><b class="up">+2.90</b><small>TSLA 較強</small></article>
+<article class="card"><span>5 日平均</span><b class="up">+1.53</b><small>百分點</small></article>
+<article class="card"><span>20 日平均</span><b class="up">+0.69</b><small>百分點</small></article>
+<article class="card"><span>累計強勢</span><b class="up">108.60</b><small>回到起始之上</small></article>
+<article class="card"><span>較強 / 較弱</span><b class="flat">54 / 40</b><small>天</small></article>
+<article class="card"><span>上市以來 TSLA</span><b class="up">+0.25%</b><small>406.43 → 407.46</small></article>
+<article class="card"><span>上市以來 SPCX</span><b class="down">-7.69%</b><small>160.95 → 148.58</small></article>
+<!-- latest:cards:end -->
+    </section>
 
     <div class="toolbar" role="toolbar" aria-label="圖表控制">
       <div class="group" id="ranges">
@@ -35,7 +108,7 @@
         <button type="button" data-series="cum" class="on" aria-pressed="true">累計值</button>
       </div>
     </div>
-    <p class="hint">滑鼠移到柱上可看當天全部數字。拖圖下方的滑桿，或在圖上用滾輪縮放。手機可雙指縮放。</p>
+    <p class="hint">點圖上任一天，或點表格任一列，看當天全部數字，拖圖下方的滑桿或雙指縮放可以改範圍</p>
 
     <section>
       <h2>每日強勢</h2>
@@ -76,7 +149,7 @@
     <div class="author-copy">
       <p class="author-label">關於製作者</p>
       <h2 id="author-name"><a href="https://edgelessblade.com/" rel="author">重劍無鋒<span>edgelessblade</span></a></h2>
-      <p class="author-description">這個工具，用每日收盤價呈現 TSLA 與 SPCX 的相對強弱。</p>
+      <p class="author-description">這個工具，用每日收盤價呈現 TSLA 與 SPCX 的相對強弱</p>
       <nav class="author-social" aria-label="作者社群">
         <a href="https://www.threads.com/@edgeless.blade">Threads <span>@edgeless.blade</span></a>
         <a href="https://github.com/0xedgelessblade">GitHub <span>@0xedgelessblade</span></a>
@@ -86,14 +159,14 @@
   </aside>
 
   <footer class="wrap">
-    <p id="updated">資料讀取中。</p>
-    <p>價格是 Yahoo Finance 的日調整收盤價。SPCX（SpaceX A 股）自 <a href="https://nasdaqtrader.com/TraderNews.aspx?id=DTN2026-8">2026-06-12</a> 在 Nasdaq 交易，所以這條線不能再往前算。強勢值從下一個兩個都有前一日收盤的交易日開始。</p>
-    <p>休市，或收盤價還沒公布時，不會用空資料覆蓋舊數字。這不是投資建議。本頁沒有後端，不放追蹤碼，也不收集訪客資料。</p>
+<!-- latest:updated:start -->
+    <p id="updated">資料截至 2026-10-27 美股收盤，本頁更新於 2026/10/27 21:20 UTC+1</p>
+<!-- latest:updated:end -->
+    <p>價格是 Yahoo Finance 的日調整收盤價，SPCX（SpaceX A 股）自 <a href="https://nasdaqtrader.com/TraderNews.aspx?id=DTN2026-8">2026-06-12</a> 在 Nasdaq 交易，所以這條線不能再往前算，強勢值從下一個兩個都有前一日收盤的交易日開始</p>
+    <p>休市，或收盤價還沒公布時，不會用空資料覆蓋舊數字，這不是投資建議，本頁沒有後端，不放追蹤碼，也不收集訪客資料</p>
   </footer>
   <noscript>
-    <p class="wrap">圖表需要瀏覽器繪圖。CSV 可以直接下載：<a href="data/series.csv">series.csv</a></p>
+    <p class="wrap">圖表需要瀏覽器繪圖，CSV 可以直接下載：<a href="data/series.csv">series.csv</a></p>
   </noscript>
-  <script src="vendor/echarts.min.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>

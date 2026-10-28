@@ -1,3 +1,5 @@
-echarts.min.js is Apache License 2.0.
+echarts.min.js is Apache ECharts 5.6.0 under the Apache License 2.0.
 The license header is at the top of that file.
+It is a custom build with only the bar and line charts, grid, tooltip,
+data zoom, mark line, mark point and the canvas renderer.
 This page does not load it from a third-party server.

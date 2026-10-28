@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Refresh public TSLA and SPCX daily closes from Yahoo Finance.
 
-Writes data/series.json and data/series.csv beside this file.
+Writes data/series.json, data/series.csv and the latest block of index.html.
 A failed download, a shorter series, or an older last day leaves the
 saved files untouched. No key, no account, no personal data.
 """
@@ -9,7 +9,9 @@ saved files untouched. No key, no account, no personal data.
 from __future__ import annotations
 
 import csv
+import html
 import json
+import re
 import subprocess
 import sys
 import time
@@ -20,6 +22,7 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
+HTML_PATH = ROOT / "index.html"
 JSON_PATH = DATA / "series.json"
 CSV_PATH = DATA / "series.csv"
 NY = ZoneInfo("America/New_York")
@@ -189,6 +192,66 @@ def write_csv(payload: dict) -> None:
             )
 
 
+def signed(value: float | None, digits: int = 2) -> str:
+    if value is None:
+        return "—"
+    return ("+" if value > 0 else "") + f"{value:.{digits}f}"
+
+
+def tone(value: float | None, middle: float = 0) -> str:
+    if value is None or value == middle:
+        return "flat"
+    return "up" if value > middle else "down"
+
+
+def card(label: str, value: str, extra: str, cls: str = "flat") -> str:
+    # Same markup as card() in app.js, so the script swaps it without a shift.
+    return (
+        f'<article class="card"><span>{html.escape(label)}</span>'
+        f'<b class="{cls}">{html.escape(value)}</b>'
+        f"<small>{html.escape(extra)}</small></article>"
+    )
+
+
+def write_html(payload: dict) -> None:
+    """Put the latest numbers into index.html for readers without JS."""
+    rows = payload["rows"]
+    strength = [r for r in rows if r["daily"] is not None]
+    last, first, end = strength[-1], rows[0], rows[-1]
+    pos = sum(1 for r in strength if r["daily"] > 0)
+    neg = sum(1 for r in strength if r["daily"] < 0)
+    tsla_ret = (end["tsla"] / first["tsla"] - 1) * 100
+    spcx_ret = (end["spcx"] / first["spcx"] - 1) * 100
+    ratio = end["ratio_index"]
+    cards = [
+        card("最新交易日", last["date"], "美股收盤"),
+        card("當日強勢", signed(last["daily"]), "TSLA 較強" if last["daily"] >= 0 else "TSLA 較弱", tone(last["daily"])),
+        card("5 日平均", signed(last["ma5"]), "百分點", tone(last["ma5"])),
+        card("20 日平均", signed(last["ma20"]), "百分點", tone(last["ma20"])),
+        card("累計強勢", f"{ratio:.2f}", "回到起始之上" if ratio >= 100 else "仍低於起始", tone(ratio, 100)),
+        card("較強 / 較弱", f"{pos} / {neg}", "天"),
+        card("上市以來 TSLA", signed(tsla_ret) + "%", f"{first['tsla']:.2f} → {end['tsla']:.2f}", tone(tsla_ret)),
+        card("上市以來 SPCX", signed(spcx_ret) + "%", f"{first['spcx']:.2f} → {end['spcx']:.2f}", tone(spcx_ret)),
+    ]
+    stamp = datetime.fromisoformat(payload["generated_at"].replace("Z", "+00:00")) + timedelta(hours=1)
+    updated = (
+        f'    <p id="updated">資料截至 {last["date"]} 美股收盤，'
+        f'本頁更新於 {stamp:%Y/%m/%d %H:%M} UTC+1</p>'
+    )
+    page = HTML_PATH.read_text()
+    for name, body in (("cards", "\n".join(cards)), ("updated", updated)):
+        start, stop = f"<!-- latest:{name}:start -->", f"<!-- latest:{name}:end -->"
+        page, count = re.subn(
+            re.escape(start) + r".*?" + re.escape(stop),
+            lambda _m: f"{start}\n{body}\n{stop}",
+            page,
+            flags=re.S,
+        )
+        if count != 1:
+            raise RuntimeError(f"index.html is missing the {name} markers")
+    HTML_PATH.write_text(page)
+
+
 def git(*args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["git", "-C", str(ROOT), *args],
@@ -199,7 +262,7 @@ def git(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def push_changes() -> int:
-    added = git("add", "data/series.json", "data/series.csv")
+    added = git("add", "data/series.json", "data/series.csv", "index.html")
     if added.returncode != 0:
         print("push skipped: could not stage files")
         return 1
@@ -225,6 +288,11 @@ NOT_YET = 75
 def main() -> int:
     DATA.mkdir(parents=True, exist_ok=True)
     old = load_existing()
+    if "--html-only" in sys.argv:
+        if not old:
+            return 1
+        write_html(old)
+        return 0
     waiting = "--require-new-day" in sys.argv
     try:
         payload = build(completed_bars(fetch_chart("TSLA")), completed_bars(fetch_chart("SPCX")))
@@ -243,6 +311,7 @@ def main() -> int:
         return 0
     JSON_PATH.write_text(json.dumps(payload, indent=2) + "\n")
     write_csv(payload)
+    write_html(payload)
     last = payload["rows"][-1]
     print(
         f"wrote {len(payload['rows'])} rows through {last['date']} "

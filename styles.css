@@ -32,6 +32,22 @@ body {
 
 header { padding: 36px 0 8px; }
 
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-family: "Songti TC", "Noto Serif TC", serif;
+  font-size: 15px;
+  text-decoration: none;
+}
+.wordmark span { color: var(--muted); font: 400 12px "Avenir Next", sans-serif; letter-spacing: .04em; }
+.wordmark:hover { text-decoration: underline; text-underline-offset: 5px; }
+
+.lede a { color: var(--ink); }
+
 .kicker {
   margin: 0 0 8px;
   color: var(--muted);
@@ -112,11 +128,14 @@ h2 span {
 .group { display: flex; flex-wrap: wrap; gap: 6px; }
 
 button, .download {
+  display: inline-flex;
+  align-items: center;
   border: 1px solid var(--line);
   background: var(--card);
   color: var(--ink);
   border-radius: 999px;
-  padding: 6px 12px;
+  min-height: 44px;
+  padding: 6px 14px;
   font: inherit;
   font-size: 14px;
   text-decoration: none;
@@ -160,7 +179,13 @@ button:focus-visible, .download:focus-visible {
 
 .table-wrap {
   overflow-x: auto;
-  background: var(--card);
+  /* Edge shadows show there is more table to scroll to. */
+  background:
+    linear-gradient(to right, var(--card) 30%, rgba(255, 253, 248, 0)) left / 40px 100% no-repeat local,
+    linear-gradient(to left, var(--card) 30%, rgba(255, 253, 248, 0)) right / 40px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(28, 25, 23, 0.16), transparent) left / 14px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(28, 25, 23, 0.16), transparent) right / 14px 100% no-repeat scroll,
+    var(--card);
   border: 1px solid var(--line);
   border-radius: 16px;
 }
@@ -184,7 +209,6 @@ th:first-child, td:first-child { text-align: left; }
 th {
   position: sticky;
   top: 0;
-  background: #faf7f1;
   color: var(--muted);
   font-weight: 600;
 }
