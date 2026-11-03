@@ -2,7 +2,7 @@
   "source": "Yahoo Finance",
   "price": "daily adjusted close",
   "listing": "2026-06-12",
-  "generated_at": "2026-11-02T21:21:02Z",
+  "generated_at": "2026-11-03T21:21:00Z",
   "rows": [
     {
       "date": "2026-06-12",
@@ -1290,6 +1290,19 @@
       "ma20": 1.413814,
       "ratio": 2.961209,
       "ratio_index": 117.266572
+    },
+    {
+      "date": "2026-11-03",
+      "tsla": 398.5,
+      "spcx": 141.31,
+      "tsla_pct": -1.31742,
+      "spcx_pct": 3.6225,
+      "daily": -4.93992,
+      "cumulative": 3.052535,
+      "ma5": 0.50009,
+      "ma20": 1.165331,
+      "ratio": 2.820041,
+      "ratio_index": 111.676208
     }
   ]
 }
