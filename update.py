@@ -252,6 +252,8 @@ def write_html(payload: dict) -> None:
         )
         if count != 1:
             raise RuntimeError(f"index.html is missing the {name} markers")
+    # 結構化資料的更新日期跟著最後一個交易日走；找不到這一行也不中斷更新
+    page = re.sub(r'"dateModified": "\d{4}-\d{2}-\d{2}"', f'"dateModified": "{last["date"]}"', page)
     HTML_PATH.write_text(page)
 
 
